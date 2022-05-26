@@ -1,0 +1,11 @@
+User:User_Create
+Password:Vny4en/!jjlKZqgd
+
+User:User_Read
+Password:ZFhTIKKemj[z8H(b
+
+User:User_Update
+Password:V*4ouF1mAuNzI(u@
+
+User:User_Delete
+Password:PLLn7VtcIKsc70C)
