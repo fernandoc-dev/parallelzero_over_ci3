@@ -4,25 +4,71 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Users_admin extends CI_Controller
 {
     /*
-    * create_an_user
+    * Users_admin content:
+    *
+    * index
+    * create
     * users
-    * update_user
+    * read_all
+    * update
     * delete
     *
-    * _load_update_user_form
+    * LOADING VIEWS
+    * _load_view
+    *
+    * CONTROLLERS FOR VALIDATION
+    * username_check
+    * birthday_check
     *
     */
 
     //Class properties
     private $data;
 
-    public function __construct() //Método constructor
+    public function __construct()
     {
         parent::__construct();
-        $this->load->model('generic_model');
+    }
+    public function index()
+    {
+        //default method
+        $this->generic_model->default_admin_redirection();
     }
     public function create()
     {
+        /*
+        * What does it do?
+        *
+        * It creates a new user from the Admin section
+        *
+        * It sets the array $section_parameter
+        * It excecutes the method admin_routine
+        *
+        * GET request_method:
+        * It loads the form for creating a new user
+        *
+        * POST request_method:
+        * It excecutes the validation form
+        * If the validation is not successfull
+        * ---> It loads the form again
+        * If the validation is successfull
+        * ---> It receives the data from the form
+        * ---> It inserts a new user
+        * ---> It redirects to read_all section
+        *
+        * How to use it?
+        *
+        * The method is called from read_all method, pushing the button "Add a new user"
+        *
+        * What does it return?
+        *
+        * GET request_method:
+        * It builds the admin users section with a form for inserting a new user
+        *
+        * POST request_method:
+        * It redirects to read_all method after inserting the new user
+        *
+        */
 
         $_SESSION['next_page'] = base_url('admin/users_admin/create');
 
@@ -44,19 +90,14 @@ class Users_admin extends CI_Controller
             //Rules for evaluating the new user's registration: 
             require_once('application/validation_routines/adminlte/users_admin/users_registration_validation_rules.php');
 
-            //If the validation is not successfull, redirect to create article form
+            //If the validation is not successfull, redirect to create user form
             if ($this->form_validation->run() == FALSE) {
                 $this->db->close();
                 $this->generic_model->set_the_flash_variables_for_modal('Sorry', validation_errors(), NULL, 'Ok');
-
-                $this->load->library('form_validation');
                 $this->data['roles'] = $this->generic_model->read_all_records('roles');
                 $this->_load_view('create');
             } else {
                 $this->db->close();
-                //Sanitizing the data and applying the XSS filters
-                $this->db->close(); //Closing the DB connection because it worked at the validation_form
-                //If the validation is successfull
                 //Sanitizing the data and applying the XSS filters
                 $user_data = $this->input->post(NULL, TRUE);
 
@@ -72,6 +113,33 @@ class Users_admin extends CI_Controller
     }
     public function read_all()
     {
+        /*
+        * What does it do?
+        *
+        * It gets all records from users table
+        *
+        * It sets the array $section_parameter
+        * It excecutes the method admin_routine
+        *
+        * GET request_method:
+        * It loads a table with the all users
+        *
+        * POST request_method:
+        * It excecutes the method default_admin_redirection
+        *
+        * How to use it?
+        *
+        * The method is called through Admin users item
+        *
+        * What does it return?
+        *
+        * GET request_method:
+        * It builds the admin users section
+        *
+        * POST request_method:
+        * It excecutes the method default_admin_redirection
+        *
+        */
 
         $_SESSION['next_page'] = base_url('admin/users_admin/read_all');
 
@@ -82,12 +150,11 @@ class Users_admin extends CI_Controller
                 'process' => __FUNCTION__,
             );
 
-            $this->data = $this->generic_model->admin_routine($section_parameters, TRUE);
+            $this->data = $this->generic_model->admin_routine($section_parameters);
 
+            $this->data['users'] = $this->generic_model->read_all_records('users');
             $this->data['roles'] = $this->generic_model->read_all_records('roles');
-
             //Load views
-            unset($_SESSION['next_page']);
             $this->_load_view('read_all');
         } elseif ($this->input->server('REQUEST_METHOD') === 'POST') {
             //Load the default admin-section
@@ -97,13 +164,53 @@ class Users_admin extends CI_Controller
     }
     public function update($id = NULL)
     {
+        /*
+        * What does it do?
+        *
+        * It updates an user
+        *
+        * It sets the array $section_parameter
+        * It excecutes the method admin_routine
+        *
+        * GET request_method:
+        * If id==NULL
+        * ---> It redirects to read_all method
+        * If id!=NULL
+        * ---> It brings the complement data
+        * ---> It loads the form for updating an admin menu item
+        *
+        * POST request_method:
+        * It receives the data from the form
+        * It excecutes the validation form
+        * If the validation is not successfull
+        * ---> It loads the validation view
+        * If the validation is successfull
+        * ---> It updates the selected user
+        * ---> It redirects to read_all section
+        *
+        * How to use it?
+        *
+        * The method is called from read_all method, pushing the update icon
+        *
+        * What does it return?
+        *
+        * GET request_method:
+        * It builds the admin user section where the user
+        * can update a user
+        *
+        * POST request_method:
+        * It excecutes the procedure to update the selected user
+        * It redirects to read_all method
+        *
+        */
+
         $_SESSION['next_page'] = base_url('admin/users_admin/read_all');
 
         $section_parameters = array(
             'section' => get_class(),
             'process' => __FUNCTION__,
         );
-        $this->data = $this->generic_model->admin_routine($section_parameters, FALSE, $id);
+        $this->data = $this->generic_model->admin_routine($section_parameters);
 
         $this->load->library('form_validation');
         if ($this->input->server('REQUEST_METHOD') === 'GET') {
@@ -112,12 +219,9 @@ class Users_admin extends CI_Controller
                 $this->generic_model->set_the_flash_variables_for_modal('Sorry', 'There is not a selected item', NULL, 'Ok');
                 redirect(base_url("admin/users_admin/read_all"));
             } else {
-                $this->data = $this->generic_model->admin_routine($section_parameters, FALSE, $id);
                 $this->data['user'] = $this->generic_model->read_a_record_by_id('users', $id);
                 $this->data['roles'] = $this->generic_model->read_all_records('roles');
-
                 //Load views
-                unset($_SESSION['next_page']);
                 $this->_load_view('update');
             }
         } elseif ($this->input->server('REQUEST_METHOD') === 'POST') {
@@ -150,7 +254,7 @@ class Users_admin extends CI_Controller
                     $this->generic_model->set_the_flash_variables_for_modal('Good news!', "The user was updated", NULL, 'Ok');
                     redirect(base_url("admin/users_admin/read_all"));
                 } else {
-                    $this->generic_model->set_the_flash_variables_for_modal('Good news!', "The user was updated", NULL, 'Ok');
+                    $this->generic_model->set_the_flash_variables_for_modal('Sorry', "The user could not be updated", NULL, 'Ok');
                     redirect(base_url("admin/users_admin/read_all"));
                 }
             }
@@ -158,6 +262,40 @@ class Users_admin extends CI_Controller
     }
     public function delete($id = NULL)
     {
+        /*
+        * What does it do?
+        *
+        * It deletes an user
+        *
+        * It sets the array $section_parameter
+        * It excecutes the method admin_routine
+        *
+        * GET request_method:
+        * If $id==NULL:
+        * It redirects to read_all method
+        * If $id!=NULL:
+        * It searches for the record that matches with $id
+        * If one record is found:
+        * ---> It deletes it
+        * If no one record is found:
+        * ---> It redirects to read_all method
+        *
+        * POST request_method:
+        * It excecutes the method default_admin_redirection
+        *
+        * How to use it?
+        *
+        * The method is called from read_all method, pushing the delete icon
+        *
+        * What does it return?
+        *
+        * GET request_method:
+        * It deletes an user
+        *
+        * POST request_method:
+        * It excecutes the method default_admin_redirection
+        *
+        */
 
         $_SESSION['next_page'] = base_url('admin/users_admin/read_all');
 
@@ -173,7 +311,7 @@ class Users_admin extends CI_Controller
                     'process' => __FUNCTION__,
                 );
 
-                $this->generic_model->admin_routine($section_parameters, FALSE);
+                $this->generic_model->admin_routine($section_parameters);
 
                 if ($this->generic_model->hard_delete_by_id('users', $id)) {
                     $this->generic_model->set_the_flash_variables_for_modal('Information', 'The item was deleted', NULL, 'Ok');
@@ -213,6 +351,8 @@ class Users_admin extends CI_Controller
         * It loads the views
         *
         */
+
+        unset($_SESSION['next_page']);
         $_SESSION['last_page'] = base_url("admin/users_admin/read_all");
 
         //Load views

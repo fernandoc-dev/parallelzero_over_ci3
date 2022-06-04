@@ -28,7 +28,7 @@
                     </thead>
                     <tbody id="table_body">
                         <?php
-                        foreach ($sections_admin['content'] as $user) {
+                        foreach ($users as $user) {
                             echo "<tr>\n";
                             echo "<td>" . $user['name'] . "</td>\n";
                             echo "<td>" . $user['username'] . "</td>\n";

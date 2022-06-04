@@ -81,7 +81,7 @@ class Menu_admin extends CI_Controller
             $this->_load_view('create');
         } elseif ($this->input->server('REQUEST_METHOD') === 'POST') {
 
-            //Rules for evaluating the admin menu items form: 
+            //Rules for evaluating the create admin menu items form: 
             require_once('application/validation_routines/adminlte/menu_admin/menu_admin_validation_rules.php');
 
             //If the validation is not successfull, redirect to create article form
@@ -153,16 +153,10 @@ class Menu_admin extends CI_Controller
         * It excecutes the method admin_routine
         *
         * GET request_method:
-        * It loads the form for creating a new admin menu item
+        * It loads a table with the all admin menu items
         *
         * POST request_method:
-        * It excecutes the validation form
-        * If the validation is not successfull
-        * ---> It loads the form again
-        * If the validation is successfull
-        * ---> It receives the data from the form
-        * ---> It excecutes the procedure for adding an admin menu item
-        * ---> It redirects to read_all section
+        * It excecutes the method default_admin_redirection
         *
         * How to use it?
         *
@@ -172,7 +166,7 @@ class Menu_admin extends CI_Controller
         *
         * GET request_method:
         * It builds the admin menu section with a table filled
-        * for the admin menu items 
+        * by admin menu items 
         *
         * POST request_method:
         * It excecutes the method default_admin_redirection
@@ -190,6 +184,7 @@ class Menu_admin extends CI_Controller
 
             $this->data = $this->generic_model->admin_routine($section_parameters, TRUE);
 
+            $this->data['menu_admin_items'] = $this->generic_model->read_all_records('menu_admin');
             $this->data['roles'] = $this->generic_model->read_all_records('roles');
             //Load views
             $this->_load_view('read_all');
@@ -207,12 +202,12 @@ class Menu_admin extends CI_Controller
         * It updates an admin menu item
         *
         * It sets the array $section_parameter
+        * It excecutes the method admin_routine
         *
         * GET request_method:
         * If id==NULL
         * ---> It redirects to read_all method
         * If id!=NULL
-        * ---> It excecutes the method admin_routine
         * ---> It brings the complement data
         * ---> It loads the form for updating an admin menu item
         *
@@ -236,12 +231,12 @@ class Menu_admin extends CI_Controller
         * can update an admin menu item
         *
         * POST request_method:
-        * It excecutes the procedure to update an admin menu item
+        * It excecutes the procedure to update the selected admin menu item
         * It redirects to read_all method
         *
         */
 
-        $this->load->library('form_validation');
+        $_SESSION['next_page'] = base_url('admin/menu_admin/read_all');
 
         $section_parameters = array(
             'section' => get_class(),
@@ -249,8 +244,7 @@ class Menu_admin extends CI_Controller
         );
         $this->data = $this->generic_model->admin_routine($section_parameters);
 
-        $_SESSION['next_page'] = base_url('admin/menu_admin/read_all');
-
+        $this->load->library('form_validation');
         if ($this->input->server('REQUEST_METHOD') === 'GET') {
             if ($id == NULL) {
                 //redirect to section controller
@@ -286,8 +280,10 @@ class Menu_admin extends CI_Controller
                 //Load views
                 $this->data['roles'] = $this->generic_model->read_all_records('roles');
                 $this->_load_view('update_validation');
-            } else {
+            } else { //If the validation is successfull
                 $this->db->close();
+
+                //Procedure for updating a new menu
                 $new_menu = array();
                 $items_menu[$data['id'] - 1]['id'] = 999; //The id's 999 will be filtered
                 if ($data['position'] == 0) {
@@ -376,7 +372,6 @@ class Menu_admin extends CI_Controller
                     'section' => get_class(),
                     'process' => __FUNCTION__,
                 );
-
                 $this->data = $this->generic_model->admin_routine($section_parameters);
 
                 if ($this->generic_model->hard_delete_by_id('menu_admin', $id)) {
@@ -386,6 +381,7 @@ class Menu_admin extends CI_Controller
                 }
 
                 //Reload the controller
+                unset($_SESSION['next_page']);
                 redirect(base_url("admin/menu_admin/read_all"));
             }
         } elseif ($this->input->server('REQUEST_METHOD') === 'POST') {
@@ -418,7 +414,6 @@ class Menu_admin extends CI_Controller
         */
 
         unset($_SESSION['next_page']);
-
         $_SESSION['last_page'] = base_url("admin/menu_admin/read_all");
 
         //Load views

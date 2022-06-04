@@ -29,7 +29,7 @@
                     </thead>
                     <tbody id="table_body">
                         <?php
-                        foreach ($sections_admin['content'] as $item) {
+                        foreach ($menu_admin_items as $item) {
                             echo "<tr>\n";
                             foreach ($item as $key => $value) {
                                 if (!in_array($key, $sections_admin['dont_show'])) {
