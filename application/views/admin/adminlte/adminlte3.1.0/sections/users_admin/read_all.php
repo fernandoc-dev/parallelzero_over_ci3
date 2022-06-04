@@ -2,7 +2,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <a href="<?php echo base_url("admin/menu_admin/create") ?>" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add <?php echo $sections_admin['section_singular'] ?></a>
+                <a href="<?php echo base_url('admin/users_admin/create') ?>" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add a New User</a>
                 <div class="card-tools">
                     <div class="input-group input-group-sm" style="width: 150px;">
                         <input type="text" name="table_search" id="table_search" class="mt-2 form-control float-right" placeholder="Search">
@@ -19,29 +19,29 @@
                 <table class="table table-hover text-nowrap">
                     <thead>
                         <tr>
-                            <?php
-                            foreach ($sections_admin['columns'] as $key => $value) {
-                                if (!in_array($value, $sections_admin['dont_show'])) {
-                                    echo "<th>" . ucfirst($value) . "</th>\n";
-                                }
-                            }
-                            echo "<th>Action</th>\n";
-                            ?>
+                            <th>User</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody id="table_body">
                         <?php
-                        foreach ($sections_admin['content'] as $item) {
+                        foreach ($sections_admin['content'] as $user) {
                             echo "<tr>\n";
-                            foreach ($item as $key => $value) {
-                                if (!in_array($key, $sections_admin['dont_show'])) {
-                                    echo "<td>" . $value . "</td>\n";
+                            echo "<td>" . $user['name'] . "</td>\n";
+                            echo "<td>" . $user['username'] . "</td>\n";
+                            echo "<td>" . $user['email'] . "</td>\n";
+                            foreach ($roles as $role) {
+                                if ($role['id'] == $user['role']) {
+                                    echo "<td>" . $role['role'] . "</td>\n";
                                 }
                             }
-                            echo "<td><a href=\"" . base_url("admin/menu_admin/update") . "/" . $item['id'] . "\">\n";
+                            echo "<td><a href=\"" . base_url("admin/users_admin/update") . "/" . $user['id'] . "\">\n";
                             echo "<i class=\"fas fa-user-edit\"></i> Edit\n";
                             echo "</a>\n";
-                            echo "<a href=\"" . base_url("admin/menu_admin/delete") . "/" . $item['id'] . "\" style=\"color: red; margin-left: 20px\">\n";
+                            echo "<a href=\"" . base_url("admin/users_admin/delete") . "/" . $user['id'] . "\" style=\"color: red; margin-left: 20px\">\n";
                             echo "<i class=\"fas fa-trash-alt\"></i> Delete\n";
                             echo "</a></td>\n";
                             echo "</tr>\n";

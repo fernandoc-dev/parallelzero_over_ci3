@@ -9,41 +9,41 @@
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <form action="<?php echo (base_url('admin/users_admin/update_user')) ?>" method="post">
+            <form action="<?php echo (base_url('admin/users_admin/update')) ?>" method="post">
                 <input type="hidden" name="<?php echo ($this->security->get_csrf_token_name()); ?>" value="<?php echo ($this->security->get_csrf_hash()); ?>" />
-                <input type="hidden" name="updating_form_id" id="" value="<?php echo $user['id']; ?>">
+                <input type="hidden" name="id" id="id" value="<?php echo $user['id']; ?>">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="updating_form_complete_name">Name:</label>
-                                <input type="text" class="form-control" name="updating_form_complete_name" id="updating_form_complete_name" placeholder="Enter name" value="<?php echo $user['complete_name']; ?>">
+                                <label for="name">Name:</label>
+                                <input type="text" class="form-control" name="name" id="name" placeholder="Enter name" value="<?php echo $user['name']; ?>">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="updating_form_email">Email address:</label>
-                                <input type="email" class="form-control" name="updating_form_email" id="updating_form_email" placeholder="Enter email" value="<?php echo $user['email']; ?>">
+                                <label for="email">Email address:</label>
+                                <input type="email" class="form-control" name="email" id="email" placeholder="Enter email" value="<?php echo $user['email']; ?>">
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="updating_form_username">Username:</label>
-                                <input type="text" class="form-control" name="updating_form_username" id="updating_form_username" placeholder="Enter username" value="<?php echo $user['username']; ?>">
+                                <label for="username">Username:</label>
+                                <input type="text" class="form-control" name="username" id="username" placeholder="Enter username" value="<?php echo $user['username']; ?>">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="updating_form_role">Role:</label>
-                                <select class="form-control" id="updating_form_role" name="updating_form_role">
+                                <label for="role">Role:</label>
+                                <select class="form-control" id="role" name="role">
                                     <?php
                                     foreach ($roles as $role) {
                                         if ($role['id'] == $user['role']) {
-                                            echo "<option value=\"" . $role['role'] . "\" selected>" . $role['role'] . "</option>";
+                                            echo "<option value=\"" . $role['id'] . "\" selected>" . $role['role'] . "</option>";
                                         } else {
-                                            echo "<option value=\"" . $role['role'] . "\">" . $role['role'] . "</option>";
+                                            echo "<option value=\"" . $role['id'] . "\">" . $role['role'] . "</option>";
                                         }
                                     }
                                     ?>
@@ -54,8 +54,12 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="updating_form_phone">Phone:</label>
-                                <input type="text" class="form-control" name="updating_form_phone" id="updating_form_phone" placeholder="Enter the phone number" value="<?php echo $user['phone']; ?>">
+                                <label for="phone">Phone:</label>
+                                <input type="text" class="form-control" name="phone" id="phone" placeholder="Enter the phone number" value="<?php echo $user['phone']; ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Birthday:</label>
+                                <input type="date" class="form-control" name="birthday" id="birthday" placeholder="Enter the birthday" value="<?php echo $user['birthday']; ?>">
                             </div>
                         </div>
                     </div>

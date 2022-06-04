@@ -34,19 +34,34 @@ class Menu_admin extends CI_Controller
         /*
         * What does it do?
         *
-        * This method creates a new record in the current table's section
-        * If the method is accessed by GET
-        * ---> Checks if the section is activated in DB
-        * ---> Loads the generic create form
-        * If the method is accessed by POST
-        * ---> Creates the new record in DB
+        * It creates a new item in the Admin menu
+        *
+        * It sets the array $section_parameter
+        * It excecutes the method admin_routine
+        *
+        * GET request_method:
+        * It loads the form for creating a new admin menu item
+        *
+        * POST request_method:
+        * It excecutes the validation form
+        * If the validation is not successfull
+        * ---> It loads the form again
+        * If the validation is successfull
+        * ---> It receives the data from the form
+        * ---> It excecutes the procedure for adding an admin menu item
+        * ---> It redirects to read_all section
         *
         * How to use it?
         *
-        * The method is called through the URL
+        * The method is called from read_all method, pushing the button "Add admin-menu item"
         *
         * What does it return?
         *
+        * GET request_method:
+        * It builds the admin menu section with a form for inserting a new admin menu item
+        *
+        * POST request_method:
+        * It redirects to read_all method after inserting the admin menu item
         *
         */
 
@@ -60,7 +75,6 @@ class Menu_admin extends CI_Controller
         $this->data = $this->generic_model->admin_routine($section_parameters);
 
         if ($this->input->server('REQUEST_METHOD') === 'GET') {
-
             //Load views
             $this->load->library('form_validation');
             $this->data['roles'] = $this->generic_model->read_all_records('roles');
@@ -74,8 +88,6 @@ class Menu_admin extends CI_Controller
             if ($this->form_validation->run() == FALSE) {
                 $this->db->close();
                 $this->generic_model->set_the_flash_variables_for_modal('Sorry', validation_errors(), NULL, 'Ok');
-
-                $this->load->library('form_validation');
                 $this->data['roles'] = $this->generic_model->read_all_records('roles');
                 $this->_load_view('create');
             } else {
@@ -83,6 +95,8 @@ class Menu_admin extends CI_Controller
                 //Sanitizing the data and applying the XSS filters
                 $data = $this->input->post(NULL, TRUE);
                 $items_menu = $this->generic_model->read_all_records('menu_admin');
+
+                //Procedure for building a new menu
                 $new_menu = array();
                 if ($data['position'] == 0) {
                     //The position is the last one
@@ -107,9 +121,11 @@ class Menu_admin extends CI_Controller
                     unset($menu['id']);
                     $this->generic_model->insert_a_new_record('menu_admin', $menu);
                 }
+                //End of procedure for building a new menu
+
                 $new_menu = $this->generic_model->read_all_records('menu_admin');
                 if ((count($items_menu) + 1 == count($new_menu)) or
-                    ($items_menu == NULL && count($new_menu) == 1)
+                    ($items_menu == NULL && count($new_menu) == 1) //If there is not menu currently
                 ) {
                     $this->generic_model->set_the_flash_variables_for_modal('Good news!', "The menu was updated", NULL, 'Ok');
                     redirect(base_url("admin/menu_admin/read_all"));
@@ -131,17 +147,35 @@ class Menu_admin extends CI_Controller
         /*
         * What does it do?
         *
-        * It gets all records of menu_admin table
-        * It checks if the section required has
-        * been activated in the DB
+        * It gets all records from menu_admin table
+        *
+        * It sets the array $section_parameter
+        * It excecutes the method admin_routine
+        *
+        * GET request_method:
+        * It loads the form for creating a new admin menu item
+        *
+        * POST request_method:
+        * It excecutes the validation form
+        * If the validation is not successfull
+        * ---> It loads the form again
+        * If the validation is successfull
+        * ---> It receives the data from the form
+        * ---> It excecutes the procedure for adding an admin menu item
+        * ---> It redirects to read_all section
         *
         * How to use it?
         *
-        * This is called from the URL
+        * The method is called through Admin menu item
         *
         * What does it return?
         *
-        * This gets the data and loads the views
+        * GET request_method:
+        * It builds the admin menu section with a table filled
+        * for the admin menu items 
+        *
+        * POST request_method:
+        * It excecutes the method default_admin_redirection
         *
         */
 
@@ -157,9 +191,7 @@ class Menu_admin extends CI_Controller
             $this->data = $this->generic_model->admin_routine($section_parameters, TRUE);
 
             $this->data['roles'] = $this->generic_model->read_all_records('roles');
-
             //Load views
-            unset($_SESSION['next_page']);
             $this->_load_view('read_all');
         } elseif ($this->input->server('REQUEST_METHOD') === 'POST') {
             //Load the default admin-section
@@ -172,26 +204,50 @@ class Menu_admin extends CI_Controller
         /*
         * What does it do?
         *
-        * If the request method is GET:
-        * ---> It loads the view for updating the selected item  
-        * If the request method is POST:
-        * ---> It process the updating
+        * It updates an admin menu item
+        *
+        * It sets the array $section_parameter
+        *
+        * GET request_method:
+        * If id==NULL
+        * ---> It redirects to read_all method
+        * If id!=NULL
+        * ---> It excecutes the method admin_routine
+        * ---> It brings the complement data
+        * ---> It loads the form for updating an admin menu item
+        *
+        * POST request_method:
+        * It receives the data from the form
+        * It excecutes the validation form
+        * If the validation is not successfull
+        * ---> It loads the form again
+        * If the validation is successfull
+        * ---> It excecutes the procedure for updating an admin menu item
+        * ---> It redirects to read_all section
         *
         * How to use it?
         *
-        * This is called from the URL
+        * The method is called from read_all method, pushing the update icon
         *
         * What does it return?
         *
+        * GET request_method:
+        * It builds the admin menu section where the user
+        * can update an admin menu item
         *
+        * POST request_method:
+        * It excecutes the procedure to update an admin menu item
+        * It redirects to read_all method
         *
         */
+
         $this->load->library('form_validation');
 
         $section_parameters = array(
             'section' => get_class(),
             'process' => __FUNCTION__,
         );
+        $this->data = $this->generic_model->admin_routine($section_parameters);
 
         $_SESSION['next_page'] = base_url('admin/menu_admin/read_all');
 
@@ -201,19 +257,15 @@ class Menu_admin extends CI_Controller
                 $this->generic_model->set_the_flash_variables_for_modal('Sorry', 'There is not a selected item', NULL, 'Ok');
                 redirect(base_url("admin/menu_admin/read_all"));
             } else {
-                $this->data = $this->generic_model->admin_routine($section_parameters, TRUE, $id);
+                $this->data['item'] = $this->generic_model->read_a_record_by_id('menu_admin', $id);
                 $this->data['roles'] = $this->generic_model->read_all_records('roles');
                 $this->data['menu_position'] = $this->generic_model->read_all_records('menu_admin');
-
                 //Load views
-                unset($_SESSION['next_page']);
                 $this->_load_view('update');
             }
         } elseif ($this->input->server('REQUEST_METHOD') === 'POST') {
             //Sanitizing the data and applying the XSS filters
             $data = $this->input->post(NULL, TRUE);
-
-            $this->data = $this->generic_model->admin_routine($section_parameters, FALSE, $data['id']);
 
             $items_menu = $this->generic_model->read_all_records('menu_admin');
 
@@ -279,15 +331,35 @@ class Menu_admin extends CI_Controller
         /*
         * What does it do?
         *
-        * It deletes an specific item
+        * It deletes an admin menu item
+        *
+        * It sets the array $section_parameter
+        * It excecutes the method admin_routine
+        *
+        * GET request_method:
+        * If $id==NULL:
+        * It redirects to read_all method
+        * If $id!=NULL:
+        * It searches for the record that matches with $id
+        * If one record is found:
+        * ---> It deletes it
+        * If no one record is found:
+        * ---> It redirects to read_all method
+        *
+        * POST request_method:
+        * It excecutes the method default_admin_redirection
         *
         * How to use it?
         *
-        * The method is accessed by the URL
+        * The method is called from read_all method, pushing the delete icon
         *
         * What does it return?
         *
-        * The method only delete the item
+        * GET request_method:
+        * It deletes an admin menu item 
+        *
+        * POST request_method:
+        * It excecutes the method default_admin_redirection
         *
         */
 
@@ -305,7 +377,7 @@ class Menu_admin extends CI_Controller
                     'process' => __FUNCTION__,
                 );
 
-                $this->data = $this->generic_model->admin_routine($section_parameters, FALSE);
+                $this->data = $this->generic_model->admin_routine($section_parameters);
 
                 if ($this->generic_model->hard_delete_by_id('menu_admin', $id)) {
                     $this->generic_model->set_the_flash_variables_for_modal('Information', 'The item was deleted', NULL, 'Ok');
@@ -314,7 +386,6 @@ class Menu_admin extends CI_Controller
                 }
 
                 //Reload the controller
-                unset($_SESSION['next_page']);
                 redirect(base_url("admin/menu_admin/read_all"));
             }
         } elseif ($this->input->server('REQUEST_METHOD') === 'POST') {
@@ -333,7 +404,7 @@ class Menu_admin extends CI_Controller
         *
         * How to use it?
         *
-        * It is a private method, The controller invocates it
+        * It is a private method, the controller invocates it
         * sending the parameter $action, which determines
         * the specific view to be loaded
         *
@@ -345,6 +416,9 @@ class Menu_admin extends CI_Controller
         * It loads the views
         *
         */
+
+        unset($_SESSION['next_page']);
+
         $_SESSION['last_page'] = base_url("admin/menu_admin/read_all");
 
         //Load views

@@ -11,13 +11,13 @@
             <!-- form start -->
             <form action="<?php echo (base_url("admin/menu_admin/update")) ?>" method="post">
                 <input type="hidden" name="<?php echo ($this->security->get_csrf_token_name()); ?>" value="<?php echo ($this->security->get_csrf_hash()); ?>" />
-                <input type="hidden" name="id" id="id" value="<?php echo $sections_admin['content']['id'] ?>" require>
+                <input type="hidden" name="id" id="id" value="<?php echo $item['id'] ?>" require>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="item">Item:</label>
-                                <input type="text" class="form-control" name="item" id="item" value="<?php echo $sections_admin['content']['item'] ?>" placeholder="Enter the item">
+                                <input type="text" class="form-control" name="item" id="item" value="<?php echo $item['item'] ?>" placeholder="Enter the item">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -27,7 +27,7 @@
                                     <?php
                                     echo "\n";
                                     foreach ($roles as $role) {
-                                        if ($role['id'] == $sections_admin['content']['role']) {
+                                        if ($role['id'] == $item['role']) {
                                             echo "\t\t\t\t\t\t\t\t\t<option value=\"" . $role['id'] . "\" selected>" . $role['role'] . "</option>\n";
                                         } else {
                                             echo "\t\t\t\t\t\t\t\t\t<option value=\"" . $role['id'] . "\">" . $role['role'] . "</option>\n";
@@ -47,7 +47,7 @@
                                     <?php
                                     echo "\n";
                                     for ($i = 1; $i < 3; $i++) {
-                                        if ($sections_admin['content']['level'] == $i) {
+                                        if ($item['level'] == $i) {
                                             echo "\t\t\t\t\t\t\t\t\t<option value=\"" . $i . "\" selected>" . $i . "</option>\n";
                                         } else {
                                             echo "\t\t\t\t\t\t\t\t\t<option value=\"" . $i . "\">" . $i . "</option>\n";
@@ -60,7 +60,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="icon">Icon:</label>
-                                <input type="text" class="form-control" name="icon" id="icon" value="<?php echo $sections_admin['content']['icon'] ?>" placeholder="Enter the icon">
+                                <input type="text" class="form-control" name="icon" id="icon" value="<?php echo $item['icon'] ?>" placeholder="Enter the icon">
                             </div>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="link">Link:</label>
-                                <input type="text" class="form-control" name="link" id="link" value="<?php echo $sections_admin['content']['link'] ?>" placeholder="Enter the link">
+                                <input type="text" class="form-control" name="link" id="link" value="<?php echo $item['link'] ?>" placeholder="Enter the link">
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -76,15 +76,23 @@
                                 <label for="position">Position:</label>
                                 <select class="form-control select2bs4" style="width: 100%;" name="position" id="position" require>
                                     <?php
+                                    $flag = 0;
                                     echo "\n";
+                                    if (count($menu_position) == $item['id']) {
+                                        $flag = 1;
+                                    }
                                     foreach ($menu_position as $menu) {
-                                        if ($menu['id'] == $sections_admin['content']['position']) {
+                                        if ($menu['id'] == ($item['id'] + 1)) {
                                             echo "\t\t\t\t\t\t\t\t\t<option value=\"" . $menu['id'] . "\" selected>Before " . $menu['item'] . "</option>\n";
                                         } else {
                                             echo "\t\t\t\t\t\t\t\t\t<option value=\"" . $menu['id'] . "\">Before " . $menu['item'] . "</option>\n";
                                         }
                                     }
-                                    echo "\t\t\t\t\t\t\t\t\t<option value=\"0\">At the end</option>\n";
+                                    if (!$flag) {
+                                        echo "\t\t\t\t\t\t\t\t\t<option value=\"0\">At the end</option>\n";
+                                    } else {
+                                        echo "\t\t\t\t\t\t\t\t\t<option value=\"0\" selected>At the end</option>\n";
+                                    }
                                     ?>
                                 </select>
                             </div>

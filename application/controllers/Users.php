@@ -692,10 +692,12 @@ class Users extends CI_Controller
         }
         if ($birthday == $_SESSION['user']['birthday']) {
             return TRUE;
+        } elseif ($birthday == "") {
+            return TRUE;
         } else {
             if ($this->generic_model->check_date($birthday)) {
                 $age = (time() - strtotime($birthday)) / 31536000;
-                $this->form_validation->set_message('birthday_check', 'pepe');
+                $this->form_validation->set_message('birthday_check', 'The date looks wrong');
                 if (!($age > 4 && $age < 120)) {
                     return FALSE;
                 } else {

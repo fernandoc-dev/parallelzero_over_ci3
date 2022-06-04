@@ -1226,7 +1226,7 @@ class Generic_model extends CI_Model
         $this->data['items_menu'] = $this->read_records('menu_admin', array('role<=' => $_SESSION['user']['role']));
 
         //Unsetting data from sections_activated
-        $unset = array('id', 'section', 'process', 'activated', 'generic_activated', 'table_section', 'role', 'deleted');
+        $unset = array('id', 'section', 'process', 'activated', 'generic_activated', 'role', 'deleted');
         foreach ($unset as $value) {
             unset($this->data['sections_admin'][$value]);
         }

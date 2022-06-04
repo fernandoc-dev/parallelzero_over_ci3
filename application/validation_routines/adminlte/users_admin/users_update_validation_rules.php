@@ -1,14 +1,14 @@
 <?php
 $this->load->library('form_validation');
-//Receive the data from the Updating form
+$this->load->database('read');
 //Check the validation rules
 $this->form_validation->set_rules(
-    'updating_form_id',
     'id',
-    'trim|required|max_length[100]',
+    'id',
+    'trim|required|max_length[999]',
 );
 $this->form_validation->set_rules(
-    'updating_form_complete_name',
+    'name',
     'name',
     'trim|required|max_length[50]',
     array(
@@ -17,7 +17,7 @@ $this->form_validation->set_rules(
     )
 );
 $this->form_validation->set_rules(
-    'updating_form_username',
+    'username',
     'username',
     'trim|required|max_length[50]',
     array(
@@ -26,7 +26,7 @@ $this->form_validation->set_rules(
     )
 );
 $this->form_validation->set_rules(
-    'updating_form_email',
+    'email',
     'email',
     'trim|required|valid_email|max_length[50]',
     array(
@@ -35,7 +35,20 @@ $this->form_validation->set_rules(
     )
 );
 $this->form_validation->set_rules(
-    'updating_form_role',
     'role',
-    'trim|required|max_length[50]',
+    'role',
+    'trim|required|max_length[50]|in_list[1,2,3,4,5,6]',
+);
+$this->form_validation->set_rules(
+    'username',
+    'username',
+    'callback_username_check',
+);
+$this->form_validation->set_rules(
+    'birthday',
+    'birthday',
+    'callback_birthday_check',
+    array(
+        'birthday_check' => 'The given birthday looks wrong.'
+    )
 );
