@@ -11,31 +11,23 @@ class Test extends CI_Controller
     }
     public function index()
     {
-        $this->benchmark->mark('my_mark_start');
+        // $this->benchmark->mark('my_mark_start');
 
-        //test
+        // //test
 
-        $birthday = '1986/11/13';
-        if ($this->generic_model->check_date($birthday)) {
-            $age = (time() - strtotime($birthday)) / 31536000;
-            echo '<br>' . $age . '<br>';
-            //$this->form_validation->set_message('birthday_check', 'pepe');
-            if (!($age < 120 && $age > 4)) {
-                echo "No estoy entre 4 y 120 años";
-            } else {
-                echo "Si es una edad adecuada";
-            }
-        } else {
-            echo "No es una fecha valida";
-        }
+        // echo date('d/m/Y H:i', strtotime('2022-06-10 09:50:15'));
 
-        //test
+        // //test
 
 
-        // var_dump($result);
+        // // var_dump($result);
 
-        $this->benchmark->mark('my_mark_end');
-        echo "<br><br>";
-        echo 'Tiempo de ejecución: ' . $this->benchmark->elapsed_time('my_mark_start', 'my_mark_end');
+        // $this->benchmark->mark('my_mark_end');
+        // echo "<br><br>";
+        // echo 'Tiempo de ejecución: ' . $this->benchmark->elapsed_time('my_mark_start', 'my_mark_end');
+        // $query = $this->db->query("SELECT lessons.id, courses.course FROM lessons JOIN courses ON lessons.course=courses.id WHERE lessons.id=1");
+        // $result = $query->result_array();
+        $result = $this->generic_model->read_join("lessons", "courses", "lessons.course=courses.id");
+        var_dump($result);
     }
 }

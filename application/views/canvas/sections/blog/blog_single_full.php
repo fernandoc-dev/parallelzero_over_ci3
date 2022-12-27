@@ -20,26 +20,28 @@
 							============================================= -->
                     <div class="entry-meta">
                         <ul>
-                            <li><i class="icon-calendar3"></i> 10th July 2021</li>
-                            <li><a href="#"><i class="icon-user"></i> admin</a></li>
-                            <li><i class="icon-folder-open"></i> <a href="#">General</a>, <a href="#">Media</a></li>
-                            <li><a href="#"><i class="icon-comments"></i> 43 Comments</a></li>
-                            <li><a href="#"><i class="icon-camera-retro"></i></a></li>
+                            <li><i class="icon-calendar3"></i> <?php echo date('jS F Y h:i A', strtotime($created_at)); ?></li>
+                            <li><a href="#"><i class="icon-user"></i> <?php echo $author ?></a></li>
+                            <li><i class="icon-folder-open"></i> <a href="#"><?php echo $category ?></a></li>
+                            <!-- <li><a href="#"><i class="icon-comments"></i> 43 Comments</a></li> -->
+                            <!-- <li><a href="#"><i class="icon-camera-retro"></i></a></li> -->
                         </ul>
                     </div><!-- .entry-meta end -->
 
                     <!-- Entry Image
-							============================================= -->
-                    <div class="entry-image bottommargin">
-                        <a href="#"><img src="images/blog/full/10.jpg" alt="Blog Single"></a>
-                    </div><!-- .entry-image end -->
+                            ============================================= -->
+                    <!-- <div class="entry-image bottommargin">
+                        <a href="#"><img src="<?php //echo (base_url('assets/canvas/images/blog/full/10.jpg')) 
+                                                ?>" alt="Blog Single"></a>
+                    </div> -->
+                    <!-- .entry-image end -->
 
                     <!-- Entry Content
 							============================================= -->
                     <div class="entry-content mt-0">
                         <?php echo $content ?>
 
-                        <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
+                        <!-- <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
 
                         <p>Nullam id dolor id nibh ultricies vehicula ut id elit. <a href="#">Curabitur blandit tempus porttitor</a>. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Donec id elit non mi porta gravida at eget metus. Vestibulum id ligula porta felis euismod semper.</p>
 
@@ -55,7 +57,7 @@
 
                         <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.</p>
 
-                        <p>Nullam id dolor id nibh ultricies vehicula ut id elit. Curabitur blandit tempus porttitor. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Donec id elit non mi porta gravida at eget metus. Vestibulum id ligula porta felis euismod semper.</p>
+                        <p>Nullam id dolor id nibh ultricies vehicula ut id elit. Curabitur blandit tempus porttitor. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Donec id elit non mi porta gravida at eget metus. Vestibulum id ligula porta felis euismod semper.</p> -->
                         <!-- Post Single - Content End -->
 
                         <!-- Tag Cloud
@@ -126,7 +128,7 @@
                     <div class="card-header"><strong>Posted by <a href="#">John Doe</a></strong></div>
                     <div class="card-body">
                         <div class="author-image">
-                            <img src="images/author/1.jpg" alt="Image" class="rounded-circle">
+                            <img src="<?php echo (base_url('assets/canvas/')) ?>images/author/1.jpg" alt="Image" class="rounded-circle">
                         </div>
                         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolores, eveniet, eligendi et nobis neque minus mollitia sit repudiandae ad repellendus recusandae blanditiis praesentium vitae ab sint earum voluptate velit beatae alias fugit accusantium laboriosam nisi reiciendis deleniti tenetur molestiae maxime id quaerat consequatur fugiat aliquam laborum nam aliquid. Consectetur, perferendis?
                     </div>
@@ -142,7 +144,7 @@
                         <div class="grid-inner row align-items-center gutter-20">
                             <div class="col-4 col-xl-5">
                                 <div class="entry-image">
-                                    <a href="#"><img src="images/blog/small/10.jpg" alt="Blog Single"></a>
+                                    <a href="#"><img src="<?php echo (base_url('assets/canvas/')) ?>images/blog/small/10.jpg" alt="Blog Single"></a>
                                 </div>
                             </div>
                             <div class="col-8 col-xl-7">
@@ -164,7 +166,7 @@
                         <div class="grid-inner row align-items-center gutter-20">
                             <div class="col-4 col-xl-5">
                                 <div class="entry-image">
-                                    <a href="#"><img src="images/blog/small/20.jpg" alt="Blog Single"></a>
+                                    <a href="#"><img src="<?php echo (base_url('assets/canvas/')) ?>images/blog/small/20.jpg" alt="Blog Single"></a>
                                 </div>
                             </div>
                             <div class="col-8 col-xl-7">
@@ -186,7 +188,7 @@
                         <div class="grid-inner row align-items-center gutter-20">
                             <div class="col-4 col-xl-5">
                                 <div class="entry-image">
-                                    <a href="#"><img src="images/blog/small/21.jpg" alt="Blog Single"></a>
+                                    <a href="#"><img src="<?php echo (base_url('assets/canvas/')) ?>images/blog/small/21.jpg" alt="Blog Single"></a>
                                 </div>
                             </div>
                             <div class="col-8 col-xl-7">
@@ -208,7 +210,7 @@
                         <div class="grid-inner row align-items-center gutter-20">
                             <div class="col-4 col-xl-5">
                                 <div class="entry-image">
-                                    <a href="#"><img src="images/blog/small/22.jpg" alt="Blog Single"></a>
+                                    <a href="#"><img src="<?php echo (base_url('assets/canvas/')) ?>images/blog/small/22.jpg" alt="Blog Single"></a>
                                 </div>
                             </div>
                             <div class="col-8 col-xl-7">

@@ -9,41 +9,44 @@ class Generic_model extends CI_Model
     * CRUD:
     *
     * CREATE:
-    * insert_a_new_record                   REVISADO
+    * insert_a_new_record
     *
     * READ:
-    * read_all_records                      REVISADO
-    * read_a_record_by_id                   REVISADO
-    * read_records                          REVISADO
-    * read_records_or                       REVISADO
-    * check_if_the_record_exists            REVISADO
-    * get_columns_of_table                  REVISADO
+    * read_all_records          
+    * read_a_record_by_id       
+    * read_records              
+    * read_records_or           
+    * read_join
+    * check_if_the_record_exists
+    * get_columns_of_table      
     *
     * UPDATE:
-    * update_record_by_id                   REVISADO
-    * update_records                        REVISADO
-    * update_records_or                     REVISADO
+    * update_record_by_id
+    * update_records     
+    * update_records_or  
     *
     * DELETE:
-    * hard_delete_by_id                     REVISADO
-    * hard_delete                           REVISADO
-    * hard_delete_or                        REVISADO
-    * hard_delete_all                       REVISADO
+    * hard_delete_by_id
+    * hard_delete      
+    * hard_delete_or   
+    * hard_delete_all  
     *
     * OTHER FUNCIONALITIES:
     
-    * encode_id                             REVISADO
-    * decode_id                             REVISADO
+    * encode_id
+    * decode_id
     * recover_a_group_of_ids
     * recover_a_single_id
     * get_the_id_of
     *
-    * set_the_flash_variables_for_modal     REVISADO
+    * set_the_flash_variables_for_modal
     *
     * load_section_admin
-    * admin_routine                         REVISADO
-    * default_admin_redirection             REVISADO
-    * reset_id                              REVISADO
+    * admin_routine      
+    * default_redirection
+    * reset_id           
+    * formatting_date
+    * cleaning_fake_columns
     *
     */
 
@@ -131,7 +134,7 @@ class Generic_model extends CI_Model
         }
     }
     //READ:
-    public function read_all_records($table, $encode_id = FALSE)
+    public function read_all_records($table, $fields = NULL, $order_by = NULL, $encode_id = FALSE)
     {
         /*
         * What does it do?
@@ -149,7 +152,8 @@ class Generic_model extends CI_Model
         *
         * $table = 'my_table';
         * $this->load->model('generic_model');
-        * $result = $this->generic_model->read_all_records($table:STRING, $encode_id:TRUE/FALSE);
+        * $fields = 'name,email,status'; 
+        * $result = $this->generic_model->read_all_records($table:STRING, $field:STRING, $encode_id:TRUE/FALSE);
         *
         * What does it return?
         *
@@ -161,7 +165,13 @@ class Generic_model extends CI_Model
 
         $this->load->database('read');
 
+        if ($fields) {
+            $this->db->select($fields);
+        }
         $this->db->where('deleted', 0);
+        if ($order_by) {
+            $this->db->order_by($order_by[0], $order_by[1]);
+        }
         $query = $this->db->get($table);
         $records = $query->result_array();
         $this->db->close();
@@ -172,7 +182,7 @@ class Generic_model extends CI_Model
             return $records;
         }
     }
-    public function read_a_record_by_id($table, $id, $encode_id = FALSE)
+    public function read_a_record_by_id($table, $id, $fields = NULL, $order_by = NULL, $encode_id = FALSE)
     {
         /*
         * What does it do?
@@ -191,7 +201,8 @@ class Generic_model extends CI_Model
         * $table = 'my_table';
         * $id = 4;
         * $this->load->model('generic_model');
-        * $result = $this->generic_model->get_a_record_by_id($table:STRING, $id:INTEGER, $encode_id:TRUE/FALSE);
+        * $fields = 'name,email,status';
+        * $result = $this->generic_model->get_a_record_by_id($table:STRING, $id:INTEGER, $fields:STRING, $encode_id:TRUE/FALSE);
         *
         * What does it return?
         *
@@ -203,8 +214,14 @@ class Generic_model extends CI_Model
 
         $this->load->database('read');
 
+        if ($fields) {
+            $this->db->select($fields);
+        }
         $this->db->where('id', $id);
         $this->db->where('deleted', 0);
+        if ($order_by) {
+            $this->db->order_by($order_by[0], $order_by[1]);
+        }
         $query = $this->db->get($table);
         $record = $query->row_array();
         $this->db->close();
@@ -219,7 +236,7 @@ class Generic_model extends CI_Model
             return FALSE;
         }
     }
-    public function read_records($table, $values_to_match, $encode_id = FALSE)
+    public function read_records($table, $values_to_match, $fields = NULL, $order_by = NULL, $encode_id = FALSE)
     {
         /*
         * What does it do?
@@ -241,8 +258,9 @@ class Generic_model extends CI_Model
         *    'role<=' => 4,
         *    'deleted' => 0
         * );
+        * $fields = 'name,email,status'; 
         * $this->load->model('generic_model');
-        * $result = $this->generic_model->read_records($table:STRING, $values_to_match:ARRAY,$encode_id:TRUE/FALSE);
+        * $result = $this->generic_model->read_records($table:STRING, $values_to_match:ARRAY, $fields:STRING, $encode_id:TRUE/FALSE);
         *
         * What does it return?
         *
@@ -254,15 +272,21 @@ class Generic_model extends CI_Model
 
         $this->load->database('read');
         $counter = 1;
-        $fields = count($values_to_match);
+        $criteria = count($values_to_match);
         $query = $this->db; //Symbolic line to avoid an err message
+        if ($fields) {
+            $this->db->select($fields);
+        }
         foreach ($values_to_match as $key => $value) {
             if ($counter == 1) {
                 $this->db->where($key, $value);
-            } elseif ($counter <= $fields) {
+            } elseif ($counter <= $criteria) {
                 $this->db->where($key, $value);
             }
-            if ($counter == $fields) {
+            if ($counter == $criteria) {
+                if ($order_by) {
+                    $this->db->order_by($order_by[0], $order_by[1]);
+                }
                 $query = $this->db->get($table);
                 break;
             }
@@ -277,7 +301,7 @@ class Generic_model extends CI_Model
             return $records;
         }
     }
-    public function read_records_or($table, $values_to_match, $encode_id = FALSE)
+    public function read_records_or($table, $values_to_match, $fields = NULL, $order_by = NULL, $encode_id = FALSE)
     {
         /*
         * What does it do?
@@ -299,8 +323,9 @@ class Generic_model extends CI_Model
         *    'role<=' => 4,
         *    'deleted' => 0
         * );
+        * $fields = 'name,email,status'; 
         * $this->load->model('generic_model');
-        * $result = $this->generic_model->read_records_or($table:STRING, $values_to_match:ARRAY,$encode_id:TRUE/FALSE);
+        * $result = $this->generic_model->read_records_or($table:STRING, $values_to_match:ARRAY, $fields:STRINGS, $encode_id:TRUE/FALSE);
         *
         * What does it return?
         *
@@ -312,15 +337,21 @@ class Generic_model extends CI_Model
 
         $this->load->database('read');
         $counter = 1;
-        $fields = count($values_to_match);
+        $criteria = count($values_to_match);
         $query = $this->db; //Symbolic line to avoid an err message
+        if ($fields) {
+            $this->db->select($fields);
+        }
         foreach ($values_to_match as $key => $value) {
             if ($counter == 1) {
                 $this->db->where($key, $value);
-            } elseif ($counter <= $fields) {
+            } elseif ($counter <= $criteria) {
                 $this->db->or_where($key, $value);
             }
-            if ($counter == $fields) {
+            if ($counter == $criteria) {
+                if ($order_by) {
+                    $this->db->order_by($order_by[0], $order_by[1]);
+                }
                 $query = $this->db->get($table);
                 break;
             }
@@ -328,6 +359,72 @@ class Generic_model extends CI_Model
         }
         $records = $query->result_array();
         $this->db->close();
+        if ($encode_id) {
+            $records = $this->encode_id($records);
+            return $records;
+        } else {
+            return $records;
+        }
+    }
+    public function read_join($table, $table2, $relationship, $where = NULL, $join = NULL, $fields = NULL, $order_by = NULL, $encode_id = FALSE)
+    {
+        /*
+        * What does it do?
+        *
+        * It builts a SQL query with JOINS
+        *
+        * If $encode_id == TRUE is excecuted the method "encode_id"
+        * where is applied a mask to id
+        *
+        * It requires a "read" user profile
+        *
+        * How to use it?
+        *
+        * $table = 'left_table';
+        * $table2 = 'right_table';
+        * $relationship = 'lessons.course = courses.id';
+        * $where = 'lessons.id = 3';
+        * $join = 'LEFT'; Values=> JOIN (INNER JOIN) / RIGHT (RIGHT JOIN) / LEFT (LEFT JOIN)
+        * $fields = 'lessons.title, courses.course'; 
+        * $this->load->model('generic_model');
+        * $result = $this->generic_model->read_join($table:STRING, $table2:STRING, $relationship:STRING, $where:STRING, $join:STRING, $fields:STRING, $encode_id:TRUE/FALSE);
+        *
+        * What does it return?
+        *
+        * It returns the query's result in array format o NULL if there are not records
+        *
+        */
+
+        $this->reporting_model->execution_trace(get_class(), __FUNCTION__);
+
+        $this->load->database('read');
+
+        switch ($join) {
+            case "LEFT":
+                $join = "LEFT JOIN";
+                break;
+            case  "RIGHT":
+                $join = "RIGHT JOIN";
+                break;
+            default:
+                $join = "JOIN";
+                break;
+        }
+        if (!$fields) {
+            $fields = "*";
+        }
+        $sql = "SELECT " . $fields . " FROM " . $table . " " . $join . " " . $table2 . " ON " . $relationship;
+        if ($where) {
+            $sql .= " WHERE " . $where;
+        }
+        if ($order_by) {
+            $sql .= " ORDER BY $order_by[0] $order_by[1]";
+        }
+        $query = $this->db->query($sql);
+        $records = $query->result_array();
+
+        $this->db->close();
+
         if ($encode_id) {
             $records = $this->encode_id($records);
             return $records;
@@ -427,6 +524,7 @@ class Generic_model extends CI_Model
         */
 
         $this->reporting_model->execution_trace(get_class(), __FUNCTION__);
+        $this->db->close();
 
         $this->load->database('update');
 
@@ -1074,7 +1172,7 @@ class Generic_model extends CI_Model
             return FALSE;
         }
     }
-    public function default_redirection()
+    public function default_redirection($specific_redirection = NULL)
     {
         /*
         * What does it do?
@@ -1083,8 +1181,7 @@ class Generic_model extends CI_Model
         *
         * How to use it?
         *
-        
-        * $result = $this->generic_model->default_redirection();
+        * $result = $this->generic_model->default_redirection($specific_redirection);
         *
         * What does it return?
         *
@@ -1094,6 +1191,9 @@ class Generic_model extends CI_Model
         */
 
         $this->reporting_model->execution_trace(get_class(), __FUNCTION__);
+        if ($specific_redirection) {
+            redirect(base_url($specific_redirection));
+        }
         if (isset($_SESSION['next_page'])) {
             redirect($_SESSION['next_page']);
             // } elseif (isset($_SESSION['last_page'])) {
@@ -1191,8 +1291,8 @@ class Generic_model extends CI_Model
         $this->data['company_data'] = $this->read_a_record_by_id('company_data', 1);
 
         //Getting the table's columns
-        if (isset($section_parameters['generic_activated'])) {
-            if ($section_parameters['generic_activated']) {
+        if (isset($this->data['sections_admin']['generic_activated'])) {
+            if ($this->data['sections_admin']['generic_activated']) {
                 $this->data['sections_admin']['columns'] = $this->get_columns_of_table($this->data['sections_admin']['table_section']);
             }
         }
@@ -1226,7 +1326,7 @@ class Generic_model extends CI_Model
         $this->data['items_menu'] = $this->read_records('menu_admin', array('role<=' => $_SESSION['user']['role']));
 
         //Unsetting data from sections_activated
-        $unset = array('id', 'section', 'process', 'activated', 'generic_activated', 'role', 'deleted');
+        $unset = array('id', 'process', 'activated', 'generic_activated', 'role', 'deleted');
         foreach ($unset as $value) {
             unset($this->data['sections_admin'][$value]);
         }
@@ -1268,5 +1368,58 @@ class Generic_model extends CI_Model
         $headers .= "From: " . $sender;
 
         mail($to, $subject, $content, $headers);
+    }
+    public function formatting_date($date, $type)
+    {
+        /*
+        * What does it do?
+        *
+        * type-1:
+        * It converts '2022-06-10 10:46:05' to '2022-06-10T10:46'
+        * type-2:
+        * It converts '2022-06-10 10:46:05' to '20/06/2022 10:46'
+        * 
+        * How to use it?
+        * 
+        * $this->generic_model->formatting_date($date);
+        *
+        * What does it return?
+        *
+        * It returns $date formatted
+        *
+        */
+        switch ($type) {
+            case 'type-1': //It converts '2022-06-10 10:46:05' to '2022-06-10T10:46'
+                $date = substr(str_replace(' ', 'T', $date), 0, 16);
+                break;
+            case 'type-2': //It converts '2022-06-10 10:46:05' to '20/06/2022 10:46'
+                $date = date('d/m/Y H:i', strtotime($date));
+                break;
+        }
+        return $date;
+    }
+    public function cleaning_fake_columns($table, $array)
+    {
+        /*
+        * What does it do?
+        *
+        * It cleans unknown fields from an array according to a table in the Database
+        * 
+        * How to use it?
+        * 
+        * $this->generic_model->cleaning_fake_columns($table, $array);
+        *
+        * What does it return?
+        *
+        * It returns an array wich fields exist in the Database's table
+        *
+        */
+        $columns = $this->get_columns_of_table($table);
+        foreach ($array as $key => $value) {
+            if (!in_array($key, $columns)) {
+                unset($array[$key]);
+            }
+        }
+        return $array;
     }
 }

@@ -10,7 +10,7 @@
             <div class="card-body">
                 <form action="<?php echo base_url('admin/blog_admin/update') ?>" method="post">
                     <input type="hidden" name="<?php echo ($this->security->get_csrf_token_name()); ?>" value="<?php echo ($this->security->get_csrf_hash()); ?>" />
-                    <input type="hidden" name="id" id="id" value="<?php echo $admin_sections['content']['id'] ?>">
+                    <input type="hidden" name="id" id="id" value="<?php echo $article['id'] ?>">
                     <div class="container-fluid">
                         <div id="accordion">
                             <div class="card">
@@ -27,13 +27,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="title">Title:</label>
-                                                    <input type="text" class="form-control" name="title" id="title" placeholder="Enter the title" value="<?php echo $admin_sections['content']['title'] ?>">
+                                                    <input type="text" class="form-control" name="title" id="title" placeholder="Enter the title" value="<?php echo $article['title'] ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="url">URL:</label>
-                                                    <input type="text" class="form-control" name="url" id="url" placeholder="Enter the URL for the article" value="<?php echo $admin_sections['content']['url'] ?>">
+                                                    <input type="text" class="form-control" name="url" id="url" placeholder="Enter the URL for the article" value="<?php echo $article['url'] ?>" disabled>
                                                 </div>
                                             </div>
                                         </div>
@@ -41,23 +41,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="author">Author:</label>
-                                                    <select class="form-control select2bs4" style="width: 100%;" name="author" id="author">
-                                                        <?php
-                                                        foreach ($authors as $author) {
-                                                            if ($admin_sections['content']['title']) {
-                                                                echo "<option value=\"" . $author['username'] . "\" selected>" . $author['complete_name'] . " (" . $author['username'] . ")" . "</option>";
-                                                            } else {
-                                                                echo "<option value=\"" . $author['username'] . "\">" . $author['complete_name'] . " (" . $author['username'] . ")" . "</option>";
-                                                            }
-                                                        }
-                                                        ?>
-                                                    </select>
+                                                    <input type="text" class="form-control" name="url" id="url" placeholder="Enter the URL for the article" value="<?php echo $author['name'] . ' (' . $author['username'] . ')'; ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="description">Description:</label>
-                                                    <input type="text" class="form-control" name="description" id="description" placeholder="Enter a description" value="<?php echo $admin_sections['content']['url'] ?>">
+                                                    <input type="text" class="form-control" name="description" id="description" placeholder="Enter a description" value="<?php echo $article['description'] ?>" disabled>
                                                 </div>
                                             </div>
                                         </div>
@@ -78,18 +68,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="category">Category:</label>
-                                                    <select class="form-control select2bs4" style="width: 100%;" name="category" id="category">
-                                                        <option value="" disabled selected>Select the Category</option>
-                                                        <?php
-                                                        foreach ($categories as $category) {
-                                                            if ($admin_sections['content']['category']) {
-                                                                echo "<option value=\"" . $category['category'] . "\" selected>" . $category['category'] . "</option>";
-                                                            } else {
-                                                                echo "<option value=\"" . $category['category'] . "\">" . $category['category'] . "</option>";
-                                                            }
-                                                        }
-                                                        ?>
-                                                    </select>
+                                                    <input type="text" value="<?php echo $article['category'] ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -98,10 +77,10 @@
                                                     <select class="select2bs4" multiple="multiple" data-placeholder="Select the sub-categories" style="width: 100%;" name="subcategories[]" id="subcategories">
                                                         <?php
                                                         foreach ($subcategories as $subcategory) {
-                                                            if (in_array($subcategory['subcategory'], $admin_sections['content']['subcategories'])) {
-                                                                echo "<option value=\"" . $subcategory['subcategory'] . "\" selected>" . $subcategory['subcategory'] . "</option>";
+                                                            if (in_array($subcategory['id'], $article['subcategories'])) {
+                                                                echo "<option value=\"" . $subcategory['id'] . "\" selected>" . $subcategory['subcategory'] . "</option>";
                                                             } else {
-                                                                echo "<option value=\"" . $subcategory['subcategory'] . "\">" . $subcategory['subcategory'] . "</option>";
+                                                                echo "<option value=\"" . $subcategory['id'] . "\">" . $subcategory['subcategory'] . "</option>";
                                                             }
                                                         }
                                                         ?>
@@ -116,10 +95,10 @@
                                                     <select class="select2bs4" multiple="multiple" data-placeholder="Select the sub-categories" style="width: 100%;" name="tags[]" id="tags">
                                                         <?php
                                                         foreach ($tags as $tag) {
-                                                            if (in_array($tag['tag'], $admin_sections['content']['tags'])) {
-                                                                echo "<option value=\"" . $tag['tag'] . "\" selected>" . $tag['tag'] . "</option>";
+                                                            if (in_array($tag['id'], $article['tags'])) {
+                                                                echo "<option value=\"" . $tag['id'] . "\" selected>" . $tag['tag'] . "</option>";
                                                             } else {
-                                                                echo "<option value=\"" . $tag['tag'] . "\">" . $tag['tag'] . "</option>";
+                                                                echo "<option value=\"" . $tag['id'] . "\">" . $tag['tag'] . "</option>";
                                                             }
                                                         }
                                                         ?>
@@ -144,13 +123,14 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="created_at">Created at:</label>
-                                                    <input type="datetime-local" class="form-control" name="created_at" id="created_at" placeholder="Created at..." value="<?php echo $admin_sections['content']['created_at'] ?>" disabled>
+                                                    <input type="datetime-local" class="form-control" name="created_at" id="created_at" placeholder="Created at..." value="<?php echo $article['created_at']
+                                                                                                                                                                            ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="current_state">Released:</label><br>
-                                                    <input type="checkbox" id="current_state" name="current_state" <?php if ($admin_sections['content']['current_state']) {
+                                                    <input type="checkbox" id="current_state" name="current_state" <?php if ($article['current_state']) {
                                                                                                                         echo "checked ";
                                                                                                                     }
                                                                                                                     ?> data-bootstrap-switch data-off-color="danger" data-on-color="success" value="">
@@ -161,13 +141,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="release_at">Release at:</label>
-                                                    <input type="datetime-local" class="form-control" name="release_at" id="release_at" placeholder="Released at..." value="<?php echo $admin_sections['content']['release_at'] ?>">
+                                                    <input type="datetime-local" class="form-control" name="release_at" id="release_at" placeholder="Released at..." value="<?php echo $article['release_at'] ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="expire_at">Expire at:</label>
-                                                    <input type="datetime-local" class="form-control" name="expire_at" id="expire_at" placeholder="Expire at..." value="<?php echo $admin_sections['content']['expire_at'] ?>">
+                                                    <input type="datetime-local" class="form-control" name="expire_at" id="expire_at" placeholder="Expire at..." value="<?php echo $article['expire_at'] ?>" disabled>
                                                 </div>
                                             </div>
                                         </div>
@@ -175,13 +155,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="modified_by">Modified by:</label>
-                                                    <input type="text" class="form-control" name="modified_by" id="modified_by" placeholder="Modified by...." value="<?php echo $admin_sections['content']['modified_by'] ?>">
+                                                    <input type="text" class="form-control" name="modified_by" id="modified_by" placeholder="Modified by...." value="<?php echo $_SESSION['user']['name'] . ' (' . $_SESSION['user']['username'] . ')'; ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="modified_at">Modified at:</label>
-                                                    <input type="datetime-local" class="form-control" name="modified_at" id="modified_at" value="<?php echo $admin_sections['content']['modified_at'] ?>" disabled>
+                                                    <input type="datetime-local" class="form-control" name="modified_at" id="modified_at" value="<?php echo str_replace(' ', 'T', date('Y-m-d H:i', time())) ?>" disabled>
                                                 </div>
                                             </div>
                                         </div>
@@ -192,11 +172,11 @@
                         <div class="form-group">
                             <label for="content">Content:</label>
                             <textarea id="content" name="content">
-                                <?php echo $admin_sections['content']['content'] ?>
+                                <?php echo $article['content'] ?>
                             </textarea>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Save article</button>
+                            <a href="<?php echo base_url('admin/blog_admin/read_all') ?>" class="btn btn-primary">Go back</a>
                         </div>
                     </div>
                 </form>

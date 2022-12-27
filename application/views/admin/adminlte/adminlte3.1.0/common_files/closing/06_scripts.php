@@ -102,7 +102,7 @@ if (isset($sections_admin['dependencies']['summernote'])) {
             contentType: false,
             processData: false,
             success: function(url) {
-                $(el).summernote('editor.insertImage', '" . base_url() . "' + url);
+                $(el).summernote('editor.insertImage', url);
             }
         });
     }
@@ -155,4 +155,12 @@ if (isset($sections_admin['dependencies']['switch'])) {
             });
         });
     });
+</script>
+<script>
+    $(document).ready(function() {
+        const selectElement = document.querySelector('#id_course');
+        selectElement.addEventListener('change', (event) => {
+            alert("Hola Mundo!");
+        });
+    })
 </script>

@@ -1,15 +1,18 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Custom_404 extends CI_Controller
+class Home extends CI_Controller
 {
+    //Class properties
+    private $data;
+
     public function __construct() //Método constructor
     {
         parent::__construct();
+        $this->load->model('generic_model');
     }
     public function index()
     {
-        $this->generic_model->set_the_flash_variables_for_modal('Sorry', 'The intended web page is not available for the moment', 'Ok');
         $this->data['courses'] = $this->generic_model->read_all_records('courses', 'course,description,image,url', array('position', 'ASC'));
         $this->data['projects'] = $this->generic_model->read_all_records('projects', 'title,short_description,image', array('position', 'ASC'));
 
@@ -42,6 +45,5 @@ class Custom_404 extends CI_Controller
         $this->load->View('home/common_files/11_scripts');
         $this->load->View('home/common_files/12_close_body_and_html');
         //End of second group of files
-        redirect(base_url());
     }
 }

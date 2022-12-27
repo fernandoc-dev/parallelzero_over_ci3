@@ -9,7 +9,7 @@
             </div>
             <!-- /.card-header -->
             <!-- form start -->
-            <form action="<?php echo (base_url("admin/generic_crud/create/" . $sections_admin['table_section'])) ?>" method="post">
+            <form action="<?php echo (base_url("admin/generic_crud/create/" . $sections_admin['section'] . "/" . $sections_admin['table_section'])) ?>" method="post">
                 <input type="hidden" name="<?php echo ($this->security->get_csrf_token_name()); ?>" value="<?php echo ($this->security->get_csrf_hash()); ?>" />
                 <div class="card-body">
                     <?php

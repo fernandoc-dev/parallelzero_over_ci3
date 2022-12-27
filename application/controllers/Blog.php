@@ -8,9 +8,24 @@ class Blog extends CI_Controller
         parent::__construct();
         $this->load->model('generic_model');
     }
+    public function index()
+    {
+        //default method
+        $this->generic_model->default_redirection('');
+    }
     public function blog($url = NULL)
     {
-        $data = $this->generic_model->get_a_record_by_record('articles', 'url', $url);
+        $values_to_match = array(
+            'url' => $url
+        );
+        $data = $this->generic_model->read_records('articles', $values_to_match);
+        $data = $data[0];
+
+        $author = $this->generic_model->read_a_record_by_id('users', $data['author']);
+        $data['author'] = $author['name'];
+
+        $category = $this->generic_model->read_a_record_by_id('categories', $data['category']);
+        $data['category'] = $category['category'];
 
         //First group of files
         $this->load->View('canvas/common_files/01_open_html', $data);

@@ -26,7 +26,6 @@ class Generic_crud extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('users_model');
         $this->load->model('generic_model');
     }
     public function index()
@@ -34,7 +33,7 @@ class Generic_crud extends CI_Controller
         //default method
         $this->generic_model->default_admin_redirection();
     }
-    public function create($section = NULL)
+    public function create($section = NULL, $table = NULL)
     {
         /*
         * What does it do?
@@ -56,7 +55,13 @@ class Generic_crud extends CI_Controller
         */
 
         if ($this->input->server('REQUEST_METHOD') === 'GET') {
-            $this->data = $this->generic_model->admin_routine('create', $section, TRUE);
+
+            $section_parameters = array(
+                'section' => $section,
+                'process' => __FUNCTION__
+            );
+            $this->data = $this->generic_model->admin_routine($section_parameters);
+
             if ($this->data) {
                 //Load views
                 $this->_load_view('create', $section);
@@ -64,7 +69,7 @@ class Generic_crud extends CI_Controller
         } elseif ($this->input->server('REQUEST_METHOD') === 'POST') {
             //Sanitizing the data and applying the XSS filters
             $data = $this->input->post(NULL, TRUE);
-            if ($this->generic_model->insert_a_new_record($section, $data)) {
+            if ($this->generic_model->insert_a_new_record($table, $data)) {
                 $this->generic_model->set_the_flash_variables_for_modal('Good news!', "The item was added", NULL, 'Ok');
                 redirect(base_url("admin/generic_crud/read_all/$section"));
             } else {
@@ -93,10 +98,16 @@ class Generic_crud extends CI_Controller
         */
 
         if ($this->input->server('REQUEST_METHOD') === 'GET') {
-            $this->data = $this->generic_model->admin_routine('read_all', $section, TRUE);
+            $section_parameters = array(
+                'section' => $section,
+                'process' => __FUNCTION__
+            );
+            $this->data = $this->generic_model->admin_routine($section_parameters, TRUE);
+
             if ($this->data) {
                 //Load views
                 $this->_load_view('read_all', $section);
+                // var_dump($this->data);
             }
         } elseif ($this->input->server('REQUEST_METHOD') === 'POST') {
             //Load the default admin-section
@@ -130,7 +141,12 @@ class Generic_crud extends CI_Controller
                 $this->generic_model->set_the_flash_variables_for_modal('Sorry', 'There is not a selected item', NULL, 'Ok');
                 redirect(base_url("admin/generic_crud/read_all/$section"));
             } else {
-                $this->data = $this->generic_model->admin_routine('update', $section, TRUE, $id);
+                $section_parameters = array(
+                    'section' => $section,
+                    'process' => __FUNCTION__
+                );
+                $this->data = $this->generic_model->admin_routine($section_parameters, TRUE, $id);
+
                 if ($this->data) {
                     //Load views
                     $this->_load_view('update', $section);
@@ -170,7 +186,12 @@ class Generic_crud extends CI_Controller
                 //Reload the controller
                 redirect(base_url("admin/generic_crud/read_all/$section"));
             } else {
-                $this->data = $this->generic_model->admin_routine('delete', $section, TRUE);
+                $section_parameters = array(
+                    'section' => $section,
+                    'process' => __FUNCTION__
+                );
+                $this->data = $this->generic_model->admin_routine($section_parameters);
+
                 if ($this->data) {
                     if ($this->generic_model->hard_delete_by_id($section, $id)) {
                         $this->generic_model->set_the_flash_variables_for_modal('Information', 'The item was deleted', NULL, 'Ok');
@@ -214,8 +235,6 @@ class Generic_crud extends CI_Controller
         $this->data['subcategories'] = $this->generic_model->read_all_records('subcategories', NULL);
         $this->data['tags'] = $this->generic_model->read_all_records('tags', NULL);
 
-        // var_dump($this->data);
-
         //Load views
         require_once('application/code_for_loading/adminlte/load_first_group_of_files.php');
 
@@ -225,18 +244,21 @@ class Generic_crud extends CI_Controller
                 break;
             case 'read_all':
                 $default_view = 'generic/responsive_hover_table_for_generic_crud';
+                if ($section == 'icons') {
+                    $default_view = 'generic/read_all_icons';
+                }
                 break;
             case 'update':
                 $default_view = 'generic/update_generic_form';
                 break;
         }
         if (
-            $this->data['admin_sections']['view'] == "generic" or
-            !file_exists('application/views/admin/adminlte/adminlte3.1.0/sections/' . $this->data['admin_sections']['view'] . '.php')
+            $this->data['sections_admin']['view'] == "generic" or
+            !file_exists('application/views/admin/adminlte/adminlte3.1.0/sections/' . $this->data['sections_admin']['view'] . '.php')
         ) {
             $this->load->View('admin/adminlte/adminlte3.1.0/sections/' . $default_view);
         } else {
-            $this->load->View('admin/adminlte/adminlte3.1.0/sections/' . $this->data['admin_sections']['view']);
+            $this->load->View('admin/adminlte/adminlte3.1.0/sections/' . $this->data['sections_admin']['view']);
         }
 
         require_once('application/code_for_loading/adminlte/load_second_group_of_files.php');

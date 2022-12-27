@@ -453,7 +453,7 @@ $config['csrf_token_name'] = 'id_security_token';
 $config['csrf_cookie_name'] = 'id_security_token';
 $config['csrf_expire'] = 7200;
 $config['csrf_regenerate'] = FALSE;
-$config['csrf_exclude_uris'] = array('admin/blog_admin/get_pictures', 'admin/lessons_admin/get_pictures', 'form', 'admin/lessons_admin/get_positions_according_to_the_selected_course');
+$config['csrf_exclude_uris'] = array('admin/blog_admin/get_pictures');
 
 /*
 |--------------------------------------------------------------------------

@@ -1,8 +1,6 @@
 <?php
 $this->load->database('read');
 $this->load->library('form_validation');
-//Receive the data from the Updating form
-//Check the validation rules
 $this->form_validation->set_rules(
     'content',
     'content',

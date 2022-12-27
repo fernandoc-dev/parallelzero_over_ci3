@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Menu_admin extends CI_Controller
 {
     /*
-    * Menu_admin content:
+    * Menu_admin contents:
     *
     * index
     * create
@@ -27,7 +27,7 @@ class Menu_admin extends CI_Controller
     public function index()
     {
         //default method
-        $this->generic_model->default_admin_redirection();
+        $this->generic_model->default_redirection('admin/menu_admin/read_all');
     }
     public function create()
     {
@@ -71,7 +71,6 @@ class Menu_admin extends CI_Controller
             'section' => get_class(),
             'process' => __FUNCTION__,
         );
-
         $this->data = $this->generic_model->admin_routine($section_parameters);
 
         if ($this->input->server('REQUEST_METHOD') === 'GET') {

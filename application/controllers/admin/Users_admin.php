@@ -4,11 +4,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class Users_admin extends CI_Controller
 {
     /*
-    * Users_admin content:
+    * Users_admin contents:
     *
     * index
     * create
-    * users
     * read_all
     * update
     * delete
@@ -32,7 +31,7 @@ class Users_admin extends CI_Controller
     public function index()
     {
         //default method
-        $this->generic_model->default_admin_redirection();
+        $this->generic_model->default_redirection('admin/users_admin/read_all');
     }
     public function create()
     {
@@ -76,7 +75,6 @@ class Users_admin extends CI_Controller
             'section' => get_class(),
             'process' => __FUNCTION__,
         );
-
         $this->data = $this->generic_model->admin_routine($section_parameters);
 
         if ($this->input->server('REQUEST_METHOD') === 'GET') {
@@ -149,7 +147,6 @@ class Users_admin extends CI_Controller
                 'section' => get_class(),
                 'process' => __FUNCTION__,
             );
-
             $this->data = $this->generic_model->admin_routine($section_parameters);
 
             $this->data['users'] = $this->generic_model->read_all_records('users');

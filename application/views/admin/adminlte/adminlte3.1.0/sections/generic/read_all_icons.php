@@ -20,12 +20,9 @@
                     <thead>
                         <tr>
                             <?php
-                            foreach ($sections_admin['columns'] as $key => $value) {
-                                if (!in_array($value, $sections_admin['dont_show'])) {
-                                    echo "<th>" . ucfirst($value) . "</th>\n";
-                                }
-                            }
-                            echo "<th>Action</th>\n";
+                            echo "<th>" . "Icon" . "</th>\n";
+                            echo "<th>" . "Image" . "</th>\n";
+                            echo "<th>" . "Action" . "</th>\n";
                             ?>
                         </tr>
                     </thead>
@@ -36,8 +33,9 @@
                             foreach ($item as $key => $value) {
                                 if (!in_array($key, $sections_admin['dont_show']) && $key != "image") {
                                     echo "<td>" . $value . "</td>\n";
+                                    echo "<td><i class=\"" . $value . "\" style=\"font-size:160%;\"></i></td>\n";
                                 } elseif (!in_array($key, $sections_admin['dont_show']) && $key === "image") {
-                                    echo "<td><i class=\"" . $item['icon'] . "\" style=\"font-size:160%;\"></i></td>\n";
+                                    echo "<td><i class=\"" . $value . "\" style=\"font-size:160%;\"></i></td>\n";
                                 }
                             }
                             echo "<td><a href=\"" . base_url("admin/generic_crud/update/") . $sections_admin['table_section'] . "/" . $item['id'] . "\">\n";

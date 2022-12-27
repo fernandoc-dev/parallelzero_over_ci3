@@ -25,6 +25,7 @@
                             <th>Category</th>
                             <th>Sub-categories</th>
                             <th>Tags</th>
+                            <th>State</th>
                             <th>Released</th>
                             <th>Expire at</th>
                             <th>Action</th>
@@ -90,13 +91,17 @@
                             } else {
                                 echo "<td>" . "NO INFORMATION" . "</td>\n";
                             }
-
+                            if ($article['current_state'] == 1) {
+                                echo "<td>" . "<span style=\"color: green; border: 2px solid green; padding: 2px;\"><b>on-line</b></span>" . "</td>\n";
+                            } else {
+                                echo "<td>" . "<span style=\"color: red; border: 2px solid red; padding: 2px;\"><b>off-line</b></span>" . "</td>\n";
+                            }
                             echo "<td>" . $article['release_at'] . "</td>\n";
                             echo "<td>" . $article['expire_at'] . "</td>\n";
-                            echo "<td><a href=\"" . base_url("admin/blog_admin/read/") . $article['id'] . "\" style=\" color: green\">\n";
+                            echo "<td><a href=\"" . base_url("admin/blog_admin/read/") . $article['id'] . "\" style=\"color: green\">\n";
                             echo "<i class=\"fa-solid fa-eye\"></i> Read\n";
                             echo "</a>\n";
-                            echo "<a href=\"" . base_url("admin/blog_admin/update/") . $article['id'] . "\" style=\" margin-left: 20px\">\n";
+                            echo "<a href=\"" . base_url("admin/blog_admin/update/") . $article['id'] . "\" style=\"margin-left: 20px\">\n";
                             echo "<i class=\"fas fa-user-edit\"></i> Edit\n";
                             echo "</a>\n";
                             echo "<a href=\"" . base_url("admin/blog_admin/delete/") . $article['id'] . "\" style=\"color: red; margin-left: 20px\">\n";

@@ -8,8 +8,9 @@
             </div>
             <!-- /.card-header -->
             <div class="card-body">
-                <form action="<?php echo base_url('admin/blog_admin/create') ?>" method="post">
+                <form action="<?php echo base_url('admin/blog_admin/update') ?>" method="post">
                     <input type="hidden" name="<?php echo ($this->security->get_csrf_token_name()); ?>" value="<?php echo ($this->security->get_csrf_hash()); ?>" />
+                    <input type="hidden" name="id" id="id" value="<?php echo $article['id'] ?>">
                     <div class="container-fluid">
                         <div id="accordion">
                             <div class="card">
@@ -26,13 +27,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="title">Title:</label>
-                                                    <input type="text" class="form-control" name="title" id="title" placeholder="Enter the title" value="">
+                                                    <input type="text" class="form-control" name="title" id="title" placeholder="Enter the title" value="<?php echo $article['title'] ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="url">URL:</label>
-                                                    <input type="text" class="form-control" name="url" id="url" placeholder="Enter the URL for the article" value="">
+                                                    <input type="text" class="form-control" name="url" id="url" placeholder="Enter the URL for the article" value="<?php echo $article['url'] ?>" disabled>
                                                 </div>
                                             </div>
                                         </div>
@@ -40,20 +41,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="author">Author:</label>
-                                                    <select class="form-control select2bs4" style="width: 100%;" name="author" id="author">
-                                                        <option value="" disabled selected>Select the Author</option>
-                                                        <?php
-                                                        foreach ($authors as $author) {
-                                                            echo "<option value=\"" . $author['username'] . "\">" . $author['name'] . " (" . $author['username'] . ")" . "</option>";
-                                                        }
-                                                        ?>
-                                                    </select>
+                                                    <input type="text" class="form-control" name="url" id="url" placeholder="Enter the URL for the article" value="<?php echo $author['name'] . ' (' . $author['username'] . ')'; ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="description">Description:</label>
-                                                    <input type="text" class="form-control" name="description" id="description" placeholder="Enter a description" value="">
+                                                    <input type="text" class="form-control" name="description" id="description" placeholder="Enter a description" value="<?php echo $article['description'] ?>" disabled>
                                                 </div>
                                             </div>
                                         </div>
@@ -74,14 +68,7 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="category">Category:</label>
-                                                    <select class="form-control select2bs4" style="width: 100%;" name="category" id="category">
-                                                        <option value="" disabled selected>Select the Category</option>
-                                                        <?php
-                                                        foreach ($categories as $category) {
-                                                            echo "<option value=\"" . $category['category'] . "\">" . $category['category'] . "</option>";
-                                                        }
-                                                        ?>
-                                                    </select>
+                                                    <input type="text" value="<?php echo $article['category'] ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -90,7 +77,11 @@
                                                     <select class="select2bs4" multiple="multiple" data-placeholder="Select the sub-categories" style="width: 100%;" name="subcategories[]" id="subcategories">
                                                         <?php
                                                         foreach ($subcategories as $subcategory) {
-                                                            echo "<option value=\"" . $subcategory['subcategory'] . "\">" . $subcategory['subcategory'] . "</option>";
+                                                            if (in_array($subcategory['id'], $article['subcategories'])) {
+                                                                echo "<option value=\"" . $subcategory['id'] . "\" selected>" . $subcategory['subcategory'] . "</option>";
+                                                            } else {
+                                                                echo "<option value=\"" . $subcategory['id'] . "\">" . $subcategory['subcategory'] . "</option>";
+                                                            }
                                                         }
                                                         ?>
                                                     </select>
@@ -104,7 +95,11 @@
                                                     <select class="select2bs4" multiple="multiple" data-placeholder="Select the sub-categories" style="width: 100%;" name="tags[]" id="tags">
                                                         <?php
                                                         foreach ($tags as $tag) {
-                                                            echo "<option value=\"" . $tag['tag'] . "\">" . $tag['tag'] . "</option>";
+                                                            if (in_array($tag['id'], $article['tags'])) {
+                                                                echo "<option value=\"" . $tag['id'] . "\" selected>" . $tag['tag'] . "</option>";
+                                                            } else {
+                                                                echo "<option value=\"" . $tag['id'] . "\">" . $tag['tag'] . "</option>";
+                                                            }
                                                         }
                                                         ?>
                                                     </select>
@@ -128,13 +123,17 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="created_at">Created at:</label>
-                                                    <input type="datetime-local" class="form-control" name="created_at" id="created_at" placeholder="Created at..." value="">
+                                                    <input type="datetime-local" class="form-control" name="created_at" id="created_at" placeholder="Created at..." value="<?php echo $article['created_at']
+                                                                                                                                                                            ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="current_state">Released:</label><br>
-                                                    <input type="checkbox" id="current_state" name="current_state" checked data-bootstrap-switch data-off-color="danger" data-on-color="success" value="1">
+                                                    <input type="checkbox" id="current_state" name="current_state" <?php if ($article['current_state']) {
+                                                                                                                        echo "checked ";
+                                                                                                                    }
+                                                                                                                    ?> data-bootstrap-switch data-off-color="danger" data-on-color="success" value="">
                                                 </div>
                                             </div>
                                         </div>
@@ -142,13 +141,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="release_at">Release at:</label>
-                                                    <input type="datetime-local" class="form-control" name="release_at" id="release_at" placeholder="Released at..." value="">
+                                                    <input type="datetime-local" class="form-control" name="release_at" id="release_at" placeholder="Released at..." value="<?php echo $article['release_at'] ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="expire_at">Expire at:</label>
-                                                    <input type="datetime-local" class="form-control" name="expire_at" id="expire_at" placeholder="Expire at..." value="">
+                                                    <input type="datetime-local" class="form-control" name="expire_at" id="expire_at" placeholder="Expire at..." value="<?php echo $article['expire_at'] ?>" disabled>
                                                 </div>
                                             </div>
                                         </div>
@@ -156,13 +155,13 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="modified_by">Modified by:</label>
-                                                    <input type="text" class="form-control" name="modified_by" id="modified_by" placeholder="Modified by...." value="">
+                                                    <input type="text" class="form-control" name="modified_by" id="modified_by" placeholder="Modified by...." value="<?php echo $_SESSION['user']['name'] . ' (' . $_SESSION['user']['username'] . ')'; ?>" disabled>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label for="modified_at">Modified at:</label>
-                                                    <input type="datetime-local" class="form-control" name="modified_at" id="modified_at" value="">
+                                                    <input type="datetime-local" class="form-control" name="modified_at" id="modified_at" value="<?php echo str_replace(' ', 'T', date('Y-m-d H:i', time())) ?>" disabled>
                                                 </div>
                                             </div>
                                         </div>
@@ -173,11 +172,11 @@
                         <div class="form-group">
                             <label for="content">Content:</label>
                             <textarea id="content" name="content">
-                                Place <em>here</em> <u>the</u> <strong>content</strong>
+                                <?php echo $article['content'] ?>
                             </textarea>
                         </div>
                         <div class="form-group">
-                            <button type="submit" class="btn btn-primary">Save article</button>
+                            <a href="<?php echo base_url('admin/blog_admin/read_all') ?>" class="btn btn-primary">Go back</a>
                         </div>
                     </div>
                 </form>
